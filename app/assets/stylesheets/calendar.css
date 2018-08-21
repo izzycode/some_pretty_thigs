@@ -152,7 +152,7 @@ body {
   transition: 0.5s ease-out;
 }
 
-.calendar .body .selected {
+.calendar .body .current {
   border-left: 10px solid transparent;
   border-image: linear-gradient(45deg, #1a8fff 0%,#53cbf1 40%);
   border-image-slice: 1;
@@ -197,7 +197,7 @@ body {
   letter-spacing: -.07em;
 }
 
-.calendar .body .cell:hover .bg, .calendar .body .selected .bg  {
+.calendar .body .cell:hover .bg, .calendar .body .current .bg  {
   opacity: 0.05;
   transition: .5s ease-in;
 }
