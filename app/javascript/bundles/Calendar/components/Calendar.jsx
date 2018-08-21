@@ -1,12 +1,18 @@
 import React from "react";
 import dateFns from "date-fns";
 import axios from "axios";
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 class Calendar extends React.Component {
   state = {
     currentMonth: new Date(),
     selectedDate: new Date(),
-    events: {}
+    events: {},
+    open: false,
+    selectedEvent: {}
   }
 
   componentDidMount(){
@@ -27,13 +33,43 @@ class Calendar extends React.Component {
       })
   }
 
+  handleClose = () => {
+    this.setState({ open: false })
+  }
+
+  handleOpen = event => {
+    this.setState({
+      open: true,
+      selectedEvent: event
+    })
+  }
 
   render() {
+    const { selectedEvent } = this.state;
     return (
-      <div className="calendar">
-        {this.renderHeader()}
-        {this.renderDays()}
-        {this.renderCells()}
+      <div>
+        <div className="calendar">
+          {this.renderHeader()}
+          {this.renderDays()}
+          {this.renderCells()}
+        </div>
+        <Dialog
+          open={this.state.open}
+          onClose={this.handleClose}
+        >
+          <DialogTitle>
+            { selectedEvent.title } - {dateFns.format(selectedEvent.start_at, "MMMM Do")}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              { selectedEvent.description }
+              <p>
+                <b>Start: </b>{ dateFns.format(selectedEvent.start_at, "h:mm a") }<br></br>
+                <b>End: </b>{ dateFns.format(selectedEvent.end_at, "h:mm a") }
+              </p>
+            </DialogContentText>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
@@ -104,7 +140,13 @@ class Calendar extends React.Component {
             {
               (events[eventFormattedDate] || []).map((event) => {
                 return(
-                  <div key={event.id} className="event">{event.title}</div>
+                  <div
+                    key={event.id}
+                    className="event"
+                    onClick={ () => { this.handleOpen(event) } }
+                  >
+                    {event.title}
+                  </div>
                 );
               })
             }
