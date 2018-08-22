@@ -126,8 +126,8 @@ class Calendar extends React.Component {
 
   handleDateClick = date => {
     let { newEvent } = this.state;
-    let start_at = date;
-    let end_at = date;
+    let start_at = dateFns.parse(date);
+    let end_at = dateFns.parse(date);
     start_at.setHours(12, 0);
     end_at.setHours(12, 0);
     newEvent.start_at = start_at;
@@ -197,7 +197,7 @@ class Calendar extends React.Component {
     const eventDateFormat = "YYYY-MM-DD";
     const eventFormattedDate = dateFns.format(event.start_at, eventDateFormat);
     let { events } = this.state;
-    axios.delete(`/events/${event.id}.json`)
+    axios.delete(`/events/${event.id}.json`, {headers: headers})
       .then((response) => {
         events[eventFormattedDate] = events[eventFormattedDate].filter((e) => {
           return e.id !== event.id
