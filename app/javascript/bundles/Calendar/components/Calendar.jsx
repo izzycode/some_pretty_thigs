@@ -82,7 +82,7 @@ class Calendar extends React.Component {
     })
   }
 
-  resetMonth = (month) => {
+  resetMonth = month => {
     const { formattedStartDate, formattedEndDate } = this.getMonthConsts(month);
     axios.get(`/events.json?start_date=${formattedStartDate}&end_date=${formattedEndDate}`)
       .then((response) => {
