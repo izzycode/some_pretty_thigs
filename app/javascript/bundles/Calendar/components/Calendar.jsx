@@ -74,6 +74,7 @@ class Calendar extends React.Component {
           open={eventDialogOpen}
           selectedEvent={selectedEvent}
           handleClose={this.handleEventDialogClose}
+          destroyEvent={this.destroyEvent}
         />
         <FormDialog
           open={formDialogOpen}
@@ -189,6 +190,25 @@ class Calendar extends React.Component {
             end_at: new Date()
           }
         })
+      })
+  }
+
+  destroyEvent = event => {
+    const eventDateFormat = "YYYY-MM-DD";
+    const eventFormattedDate = dateFns.format(event.start_at, eventDateFormat);
+    let { events } = this.state;
+    axios.delete(`/events/${event.id}.json`)
+      .then((response) => {
+        events[eventFormattedDate] = events[eventFormattedDate].filter((e) => {
+          return e.id !== event.id
+        })
+        this.setState({
+          events,
+          eventDialogOpen: false
+        })
+      })
+      .catch((error) => {
+        console.log(error.response)
       })
   }
 

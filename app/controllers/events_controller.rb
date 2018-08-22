@@ -1,4 +1,5 @@
 class EventsController < ApplicationController
+  skip_before_action :verify_authenticity_token
 
   def index
     respond_to do |format|
@@ -27,6 +28,12 @@ class EventsController < ApplicationController
     else
       render json: event.error.full_messages, status: :unprocessable_entity
     end
+  end
+
+  def destroy
+    event = Event.find(params[:id])
+    event.destroy
+    render json: event
   end
 
   private
