@@ -46,7 +46,7 @@ class Calendar extends React.Component {
             currentMonth={currentMonth}
             selectedEvent={selectedEvent}
             events={events}
-            handleOpen={this.handleEventDialogOpen}
+            handleEventClick={this.handleEventClick}
             monthStart={monthStart}
             startDate={startDate}
             endDate={endDate}
@@ -62,38 +62,35 @@ class Calendar extends React.Component {
   }
 
   nextMonth = () => {
-    const currentMonth = dateFns.addMonths(this.state.currentMonth, 1);
-    const { formattedStartDate, formattedEndDate } = this.getMonthConsts(currentMonth);
-    axios.get(`/events.json?start_date=${formattedStartDate}&end_date=${formattedEndDate}`)
-      .then((response) => {
-        this.setState({currentMonth, events: response.data});
-      })
-      .catch((error) => {
-        console.log(error.response);
-      })
+    const month = dateFns.addMonths(this.state.currentMonth, 1);
+    this.resetMonth(month);
   }
 
   prevMonth = () => {
-    const currentMonth = dateFns.subMonths(this.state.currentMonth, 1);
-    const { formattedStartDate, formattedEndDate } = this.getMonthConsts(currentMonth);
-    axios.get(`/events.json?start_date=${formattedStartDate}&end_date=${formattedEndDate}`)
-      .then((response) => {
-        this.setState({currentMonth, events: response.data});
-      })
-      .catch((error) => {
-        console.log(error.response);
-      })
+    const month = dateFns.subMonths(this.state.currentMonth, 1);
+    this.resetMonth(month);
   }
 
   handleEventDialogClose = () => {
     this.setState({ eventDialogOpen: false })
   }
 
-  handleEventDialogOpen = event => {
+  handleEventClick = event => {
     this.setState({
       eventDialogOpen: true,
       selectedEvent: event
     })
+  }
+
+  resetMonth = (month) => {
+    const { formattedStartDate, formattedEndDate } = this.getMonthConsts(month);
+    axios.get(`/events.json?start_date=${formattedStartDate}&end_date=${formattedEndDate}`)
+      .then((response) => {
+        this.setState({currentMonth: month, events: response.data});
+      })
+      .catch((error) => {
+        console.log(error.response);
+      })
   }
 
   getMonthConsts = month => {

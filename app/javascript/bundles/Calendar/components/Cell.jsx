@@ -1,11 +1,12 @@
 import React from 'react';
 import dateFns from 'date-fns';
+import DailyEvents from './DailyEvents';
 
 const Cell = props => {
   const { day, monthStart, currentDate, events } = props;
   const dateFormat = "D";
-  const eventDateFormat = "YYYY-MM-DD";
   const formattedDate = dateFns.format(day, dateFormat);
+  const eventDateFormat = "YYYY-MM-DD";
   const eventFormattedDate = dateFns.format(day, eventDateFormat);
   return(
     <div
@@ -15,19 +16,7 @@ const Cell = props => {
           : dateFns.isSameDay(day, currentDate) ? "current" : ""
       }`}
     >
-      {
-        (events[eventFormattedDate] || []).map((event) => {
-          return(
-            <div
-              key={event.id}
-              className="event"
-              onClick={ () => { props.handleOpen(event) } }
-            >
-              {event.title}
-            </div>
-          );
-        })
-      }
+      <DailyEvents dailyEvents={events[eventFormattedDate] || []} {...props} />
       <span className="number">{formattedDate}</span>
       <span className="bg">{formattedDate}</span>
     </div>
