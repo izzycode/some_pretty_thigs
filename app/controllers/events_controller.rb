@@ -20,4 +20,19 @@ class EventsController < ApplicationController
     end
   end
 
+  def create
+    event = Event.new(event_params)
+    if event.save
+      render json: event
+    else
+      render json: event.error.full_messages, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def event_params
+    params.require(:event).permit(:title, :description, :start_at, :end_at)
+  end
+
 end
