@@ -7,13 +7,15 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 const EventDialog = props => {
   const { open, selectedEvent } = props;
+  const dateFormat = "MMMM Do";
+  const timeFormat = "h:mm a";
   return(
     <Dialog
       open={open}
       onClose={props.handleClose}
     >
       <DialogTitle>
-        { selectedEvent.title } - {dateFns.format(selectedEvent.start_at, "MMMM Do")}
+        { selectedEvent.title } - {dateFns.format(selectedEvent.start_at, dateFormat)}
       </DialogTitle>
       <DialogContent>
         <DialogContentText>
@@ -22,8 +24,8 @@ const EventDialog = props => {
       </DialogContent>
       <DialogContent>
         <DialogContentText>
-          <b>Start: </b>{ dateFns.format(selectedEvent.start_at, "h:mm a") }<br></br>
-          <b>End: </b>{ dateFns.format(selectedEvent.end_at, "h:mm a") }
+          <b>Start: </b>{ dateFns.format(selectedEvent.start_at, timeFormat) }<br></br>
+          <b>End: </b>{ dateFns.format(selectedEvent.end_at, timeFormat) }
         </DialogContentText>
       </DialogContent>
     </Dialog>
