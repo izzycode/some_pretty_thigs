@@ -18,7 +18,6 @@ const Cell = props => {
     >
       <DailyEvents dailyEvents={events[eventFormattedDate] || []} {...props} />
       <span className="number">{formattedDate}</span>
-      <span className="bg">{formattedDate}</span>
     </div>
   );
 
