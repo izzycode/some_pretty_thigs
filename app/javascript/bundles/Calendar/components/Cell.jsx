@@ -15,6 +15,7 @@ const Cell = props => {
           ? "disabled"
           : dateFns.isSameDay(day, currentDate) ? "current" : ""
       }`}
+      onClick={ () => { props.handleDateClick(day) }  }
     >
       <DailyEvents dailyEvents={events[eventFormattedDate] || []} {...props} />
       <span className="number">{formattedDate}</span>

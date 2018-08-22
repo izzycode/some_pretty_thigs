@@ -139,6 +139,7 @@ body {
   border-right: 1px solid var(--border-color);
   overflow-x: hidden;
   overflow-y: scroll;
+  cursor: pointer;
   background: var(--neutral-color);
   transition: 0.25s ease-out;
 }

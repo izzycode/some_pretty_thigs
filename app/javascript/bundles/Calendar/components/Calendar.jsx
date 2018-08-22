@@ -5,6 +5,15 @@ import Header from './Header';
 import Days from './Days';
 import Cells from './Cells';
 import EventDialog from './EventDialog';
+import FormDialog from './FormDialog';
+
+const token = document.querySelector('meta[name="csrf-token"]')
+                .getAttribute('content');
+
+const headers = {
+                  'X-Requested-With': 'XMLHttpRequest',
+                  'X-CSRF-TOKEN':     token
+                }
 
 class Calendar extends React.Component {
   state = {
@@ -12,7 +21,14 @@ class Calendar extends React.Component {
     currentDate: new Date(),
     events: {},
     eventDialogOpen: false,
-    selectedEvent: {}
+    selectedEvent: {},
+    formDialogOpen: false,
+    newEvent: {
+      title: '',
+      description: '',
+      start_at: new Date(),
+      end_at: new Date()
+    }
   }
 
   componentDidMount(){
@@ -28,7 +44,8 @@ class Calendar extends React.Component {
   }
 
   render() {
-    const { selectedEvent, currentMonth, events, eventDialogOpen, currentDate } = this.state;
+    const { selectedEvent, currentMonth, events, formDialogOpen,
+            newEvent, eventDialogOpen, currentDate } = this.state;
     const { startDate, endDate, monthStart } = this.getMonthConsts(currentMonth);
     return (
       <div>
@@ -47,6 +64,7 @@ class Calendar extends React.Component {
             selectedEvent={selectedEvent}
             events={events}
             handleEventClick={this.handleEventClick}
+            handleDateClick={this.handleDateClick}
             monthStart={monthStart}
             startDate={startDate}
             endDate={endDate}
@@ -56,6 +74,16 @@ class Calendar extends React.Component {
           open={eventDialogOpen}
           selectedEvent={selectedEvent}
           handleClose={this.handleEventDialogClose}
+        />
+        <FormDialog
+          open={formDialogOpen}
+          newEvent={newEvent}
+          handleClose={this.handleFormDialogClose}
+          handleTitleChange={this.handleTitleChange}
+          handleDescriptionChange={this.handleDescriptionChange}
+          handleStartAtChange={this.handleStartAtChange}
+          handleEndAtChange={this.handleEndAtChange}
+          createEvent={this.createEvent}
         />
       </div>
     );
@@ -75,11 +103,93 @@ class Calendar extends React.Component {
     this.setState({ eventDialogOpen: false })
   }
 
-  handleEventClick = event => {
+  handleFormDialogClose = () => {
+    this.setState({
+      formDialogOpen: false,
+      newEvent: {
+        title: '',
+        description: '',
+        start_at: new Date(),
+        end_at: new Date()
+      }
+    })
+  }
+
+  handleEventClick = (calendarEvent, clickEvent) => {
+    clickEvent.stopPropagation();
     this.setState({
       eventDialogOpen: true,
-      selectedEvent: event
+      selectedEvent: calendarEvent
     })
+  }
+
+  handleDateClick = date => {
+    let { newEvent } = this.state;
+    let start_at = date;
+    let end_at = date;
+    start_at.setHours(12, 0);
+    end_at.setHours(12, 0);
+    newEvent.start_at = start_at;
+    newEvent.end_at = end_at;
+    this.setState({
+      newEvent,
+      formDialogOpen: true
+    });
+  }
+
+  handleStartAtChange = time => {
+    let { newEvent } = this.state;
+    const hours = time.getHours();
+    const minutes = time.getMinutes();
+    newEvent.start_at.setHours(hours, minutes)
+    this.setState({ newEvent });
+  }
+
+  handleEndAtChange = time => {
+    let { newEvent } = this.state;
+    const hours = time.getHours();
+    const minutes = time.getMinutes();
+    newEvent.end_at.setHours(hours, minutes)
+    this.setState({ newEvent });
+  }
+
+  handleTitleChange = event => {
+    let { newEvent } = this.state;
+    newEvent.title = event.target.value;
+    this.setState({ newEvent });
+  }
+
+  handleDescriptionChange = event => {
+    let { newEvent } = this.state;
+    newEvent.description = event.target.value;
+    this.setState({ newEvent });
+  }
+
+  createEvent = newEvent => {
+    const eventDateFormat = "YYYY-MM-DD";
+    const eventFormattedDate = dateFns.format(newEvent.start_at, eventDateFormat);
+    let { events } = this.state;
+    axios.post(`/events.json`, newEvent, {headers: headers})
+      .then((response) => {
+        if(events[eventFormattedDate]){
+          events[eventFormattedDate].push(response.data);
+        }else{
+          events[eventFormattedDate] = [response.data];
+        }
+        events[eventFormattedDate].sort((e1, e2) => {
+          return e1.start_at > e2.start_at ? 1 : e1.start_at < e2.start_at ? -1 : 0
+        })
+        this.setState({
+          events,
+          formDialogOpen: false,
+          newEvent: {
+            title: '',
+            description: '',
+            start_at: new Date(),
+            end_at: new Date()
+          }
+        })
+      })
   }
 
   resetMonth = month => {
