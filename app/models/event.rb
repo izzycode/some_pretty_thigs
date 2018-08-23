@@ -1,4 +1,6 @@
 class Event < ApplicationRecord
+  belongs_to :user
+
   scope :ordered, -> { order(:start_at) }
   scope :between, ->(start_date, end_date) do
     where(
