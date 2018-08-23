@@ -7,7 +7,9 @@ class EventsController < ApplicationController
         start_date  = Date.parse(params[:start_date]) rescue nil
         end_date    = Date.parse(params[:end_date]) rescue nil
         if start_date && end_date
-          events  = Event.between(start_date, end_date)
+          events  = current_user
+                      .events
+                      .between(start_date, end_date)
                       .ordered
                       .group_by do |event|
                         event.start_at.to_date
@@ -21,7 +23,7 @@ class EventsController < ApplicationController
   end
 
   def create
-    event = Event.new(event_params)
+    event = current_user.events.new(event_params)
     if event.save
       render json: event
     else
@@ -30,7 +32,7 @@ class EventsController < ApplicationController
   end
 
   def destroy
-    event = Event.find(params[:id])
+    event = current_user.events.find(params[:id])
     event.destroy
     render json: event
   end
