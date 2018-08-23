@@ -12,21 +12,21 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 
 const FormDialog = props => {
-  const { newEvent, createEvent, open } = props;
+  const { event, createEvent, open } = props;
   return (
     <div>
       <Dialog
         open={open}
         onClose={props.handleClose}
       >
-        <DialogTitle>New Event for {dateFns.format(newEvent.start_at, "MMMM Do")}</DialogTitle>
+        <DialogTitle>New Event for {dateFns.format(event.start_at, "MMMM Do")}</DialogTitle>
         <DialogContent>
           <TextField
             margin="dense"
             id="title"
             label="Title"
             type="text"
-            value={newEvent.title}
+            value={event.title}
             onChange={props.handleTitleChange}
             fullWidth
           />
@@ -35,7 +35,7 @@ const FormDialog = props => {
             id="description"
             label="Description"
             type="text"
-            value={newEvent.description}
+            value={event.description}
             onChange={props.handleDescriptionChange}
             fullWidth
           />
@@ -48,7 +48,7 @@ const FormDialog = props => {
               id="start_at"
               name="start_at"
               mode="12h"
-              value={newEvent.start_at}
+              value={event.start_at}
               onChange={props.handleStartAtChange}
             />
           </FormControl>
@@ -61,7 +61,7 @@ const FormDialog = props => {
               id="end_at"
               name="end_at"
               mode="12h"
-              value={newEvent.end_at}
+              value={event.end_at}
               onChange={props.handleEndAtChange}
             />
           </FormControl>
@@ -70,7 +70,7 @@ const FormDialog = props => {
           <Button onClick={props.handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={ () => { props.createEvent(newEvent) } } color="primary">
+          <Button onClick={ () => { props.createEvent(event) } } color="primary">
             Submit
           </Button>
         </DialogActions>
