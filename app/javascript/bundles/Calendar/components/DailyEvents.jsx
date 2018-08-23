@@ -6,9 +6,13 @@ const DailyEvents = props => {
   return(
     <div>
       {
-        dailyEvents.map((event) => {
+        dailyEvents.map((calendarEvent) => {
           return(
-            <Event key={event.id} event={event} {...props} />
+            <Event
+              key={calendarEvent.id}
+              calendarEvent={calendarEvent}
+              {...props}
+            />
           );
         })
       }

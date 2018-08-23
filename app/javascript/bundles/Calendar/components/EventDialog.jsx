@@ -8,7 +8,7 @@ import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 
 const EventDialog = props => {
-  const { open, selectedEvent } = props;
+  const { open, event } = props;
   const dateFormat = "MMMM Do";
   const timeFormat = "h:mm a";
   return(
@@ -17,24 +17,24 @@ const EventDialog = props => {
       onClose={props.handleClose}
     >
       <DialogTitle>
-        { selectedEvent.title } - {dateFns.format(selectedEvent.start_at, dateFormat)}
+        { event.title } - {dateFns.format(event.start_at, dateFormat)}
       </DialogTitle>
       <DialogContent>
         <DialogContentText>
-          { selectedEvent.description }
+          { event.description }
         </DialogContentText>
       </DialogContent>
       <DialogContent>
         <DialogContentText>
-          <b>Start: </b>{ dateFns.format(selectedEvent.start_at, timeFormat) }<br></br>
-          <b>End: </b>{ dateFns.format(selectedEvent.end_at, timeFormat) }
+          <b>Start: </b>{ dateFns.format(event.start_at, timeFormat) }<br></br>
+          <b>End: </b>{ dateFns.format(event.end_at, timeFormat) }
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button onClick={props.handleClose} color="primary">
           Cancel
         </Button>
-        <Button onClick={ () => { props.destroyEvent(selectedEvent) } } color="secondary">
+        <Button onClick={ () => { props.destroyEvent(event) } } color="secondary">
           Delete
         </Button>
       </DialogActions>

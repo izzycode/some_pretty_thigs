@@ -1,13 +1,13 @@
 import React from 'react';
 
 const Event = props => {
-  const { event } = props;
+  const { calendarEvent } = props;
   return(
     <div
       className="event"
-      onClick={ (clickEvent) => { props.handleEventClick(event, clickEvent) } }
+      onClick={ (clickEvent) => { props.handleEventClick(calendarEvent, clickEvent) } }
     >
-      {event.title}
+      {calendarEvent.title}
     </div>
   );
 }
