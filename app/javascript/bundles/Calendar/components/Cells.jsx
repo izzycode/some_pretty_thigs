@@ -1,25 +1,46 @@
 import React from 'react';
 import dateFns from "date-fns";
+import { calendarBoundaries } from './calendarBoundaries';
 import Cell from './Cell';
 
 const Cells = props => {
-  const { startDate, endDate } = props;
-  const rows = [];
+  const { calendarStart,
+          calendarEnd } = calendarBoundaries(props.currentDate);
+  const weeks = [];
   let days = [];
-  let day = startDate;
-  while (day <= endDate) {
+  let day = calendarStart;
+  while (day <= calendarEnd) {
     for (let i = 0; i < 7; i++) {
-      const cloneDay = day;
-      days.push(<Cell key={day} day={cloneDay} {...props} />);
+      const cloneDay = dateFns.parse(day);
+      days.push(cloneDay);
       day = dateFns.addDays(day, 1);
     }
-    rows.push(<div className="row" key={day}>{days}</div>);
+    weeks.push(days);
     days = [];
   }
   return(
-    <div className="body">{rows}</div>
+    <div className="body">
+      {
+        weeks.map((week, i) => {
+          return(
+            <div className="row" key={i}>
+              {
+                week.map((day, ii) => {
+                  return(
+                    <Cell
+                      key={ii}
+                      day={day}
+                      {...props}
+                    />
+                  )
+                })
+              }
+            </div>
+          )
+        })
+      }
+    </div>
   );
-
 }
 
-export default Cells;
+export default Cells

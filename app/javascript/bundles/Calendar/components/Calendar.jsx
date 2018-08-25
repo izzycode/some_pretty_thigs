@@ -1,3 +1,5 @@
+import { calendarBoundaries } from './calendarBoundaries';
+import { csrfHeaders } from './csrfHeaders';
 import React from "react";
 import dateFns from "date-fns";
 import axios from "axios";
@@ -7,18 +9,11 @@ import Cells from './Cells';
 import EventDialog from './EventDialog';
 import FormDialog from './FormDialog';
 
-const token = document.querySelector('meta[name="csrf-token"]')
-                .getAttribute('content');
-
-const headers = {
-                  'X-Requested-With': 'XMLHttpRequest',
-                  'X-CSRF-TOKEN':     token
-                }
+const today = new Date();
 
 class Calendar extends React.Component {
   state = {
-    currentMonth: new Date(),
-    currentDate: new Date(),
+    month: calendarBoundaries(today).monthStart,
     events: {},
     eventDialogOpen: false,
     formDialogOpen: false,
@@ -31,9 +26,11 @@ class Calendar extends React.Component {
   }
 
   componentDidMount(){
-    const { currentMonth } = this.state;
-    const { formattedStartDate, formattedEndDate } = this.getMonthConsts(currentMonth);
-    axios.get(`/events.json?start_date=${formattedStartDate}&end_date=${formattedEndDate}`)
+    const {
+            calendarStartYYYYMMDD,
+            calendarEndYYYYMMDD
+          } = calendarBoundaries(today);
+    axios.get(`/events.json?start_date=${calendarStartYYYYMMDD}&end_date=${calendarEndYYYYMMDD}`)
       .then((response) => {
         this.setState({events: response.data});
       })
@@ -43,30 +40,23 @@ class Calendar extends React.Component {
   }
 
   render() {
-    const { currentMonth, events, formDialogOpen,
-            event, eventDialogOpen, currentDate } = this.state;
-    const { startDate, endDate, monthStart } = this.getMonthConsts(currentMonth);
+    const { date, month, events, event,
+            formDialogOpen, eventDialogOpen } = this.state;
     return (
       <div>
         <div className="calendar">
           <Header
+            month={month}
             nextMonth={this.nextMonth}
             prevMonth={this.prevMonth}
-            currentMonth={currentMonth}
           />
-          <Days
-            currentMonth={currentMonth}
-          />
+          <Days />
           <Cells
-            currentDate={currentDate}
-            currentMonth={currentMonth}
-            event={event}
             events={events}
+            currentDate={today}
+            month={month}
             handleEventClick={this.handleEventClick}
             handleDateClick={this.handleDateClick}
-            monthStart={monthStart}
-            startDate={startDate}
-            endDate={endDate}
           />
         </div>
         <EventDialog
@@ -90,12 +80,12 @@ class Calendar extends React.Component {
   }
 
   nextMonth = () => {
-    const month = dateFns.addMonths(this.state.currentMonth, 1);
+    const month = dateFns.addMonths(this.state.month, 1);
     this.resetMonth(month);
   }
 
   prevMonth = () => {
-    const month = dateFns.subMonths(this.state.currentMonth, 1);
+    const month = dateFns.subMonths(this.state.month, 1);
     this.resetMonth(month);
   }
 
@@ -177,7 +167,7 @@ class Calendar extends React.Component {
     const eventDateFormat = "YYYY-MM-DD";
     const eventFormattedDate = dateFns.format(event.start_at, eventDateFormat);
     let { events } = this.state;
-    axios.post(`/events.json`, event, {headers: headers})
+    axios.post(`/events.json`, event, {headers: csrfHeaders})
       .then((response) => {
         if(events[eventFormattedDate]){
           events[eventFormattedDate].push(response.data);
@@ -204,7 +194,7 @@ class Calendar extends React.Component {
     const eventDateFormat = "YYYY-MM-DD";
     const eventFormattedDate = dateFns.format(event.start_at, eventDateFormat);
     let { events } = this.state;
-    axios.delete(`/events/${event.id}.json`, {headers: headers})
+    axios.delete(`/events/${event.id}.json`, {headers: csrfHeaders})
       .then((response) => {
         events[eventFormattedDate] = events[eventFormattedDate].filter((e) => {
           return e.id !== event.id
@@ -223,7 +213,7 @@ class Calendar extends React.Component {
     const { formattedStartDate, formattedEndDate } = this.getMonthConsts(month);
     axios.get(`/events.json?start_date=${formattedStartDate}&end_date=${formattedEndDate}`)
       .then((response) => {
-        this.setState({currentMonth: month, events: response.data});
+        this.setState({ month, events: response.data });
       })
       .catch((error) => {
         console.log(error.response);

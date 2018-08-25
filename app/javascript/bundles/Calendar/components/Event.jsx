@@ -5,7 +5,9 @@ const Event = props => {
   return(
     <div
       className="event"
-      onClick={ (clickEvent) => { props.handleEventClick(calendarEvent, clickEvent) } }
+      onClick={
+        clickEvent => props.handleEventClick(calendarEvent, clickEvent)
+      }
     >
       {calendarEvent.title}
     </div>
