@@ -6,6 +6,7 @@ const Cell = props => {
   const { day, currentDate, month, events } = props;
   const cellFormattedDate = dateFns.format(day, "D");
   const eventFormattedDate = dateFns.format(day, "YYYY-MM-DD");
+  // console.log(day, month);
   return(
     <div
       className={`col cell ${

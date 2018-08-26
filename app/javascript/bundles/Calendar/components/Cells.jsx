@@ -1,11 +1,11 @@
 import React from 'react';
 import dateFns from "date-fns";
-import { calendarBoundaries } from './calendarBoundaries';
+import { calendarBoundaries } from './calendarFns';
 import Cell from './Cell';
 
 const Cells = props => {
   const { calendarStart,
-          calendarEnd } = calendarBoundaries(props.currentDate);
+          calendarEnd } = calendarBoundaries(props.month);
   const weeks = [];
   let days = [];
   let day = calendarStart;

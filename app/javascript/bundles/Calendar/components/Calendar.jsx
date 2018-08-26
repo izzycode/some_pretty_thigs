@@ -1,5 +1,3 @@
-import { calendarBoundaries } from './calendarBoundaries';
-import { csrfHeaders } from './csrfHeaders';
 import React from "react";
 import dateFns from "date-fns";
 import axios from "axios";
@@ -8,8 +6,12 @@ import Days from './Days';
 import Cells from './Cells';
 import EventDialog from './EventDialog';
 import FormDialog from './FormDialog';
-
-const today = new Date();
+import { csrfHeaders } from './csrfHeaders';
+import {
+  calendarBoundaries,
+  today,
+  newEvent
+} from './calendarFns';
 
 class Calendar extends React.Component {
   state = {
@@ -17,19 +19,12 @@ class Calendar extends React.Component {
     events: {},
     eventDialogOpen: false,
     formDialogOpen: false,
-    event: {
-      title: '',
-      description: '',
-      start_at: new Date(),
-      end_at: new Date()
-    }
+    event: newEvent()
   }
 
   componentDidMount(){
-    const {
-            calendarStartYYYYMMDD,
-            calendarEndYYYYMMDD
-          } = calendarBoundaries(today);
+    const { calendarStartYYYYMMDD,
+            calendarEndYYYYMMDD } = calendarBoundaries(today);
     axios.get(`/events.json?start_date=${calendarStartYYYYMMDD}&end_date=${calendarEndYYYYMMDD}`)
       .then((response) => {
         this.setState({events: response.data});
@@ -92,24 +87,14 @@ class Calendar extends React.Component {
   handleEventDialogClose = () => {
     this.setState({
       eventDialogOpen: false,
-      event: {
-        title: '',
-        description: '',
-        start_at: new Date(),
-        end_at: new Date()
-      }
+      event: newEvent()
     })
   }
 
   handleFormDialogClose = () => {
     this.setState({
       formDialogOpen: false,
-      event: {
-        title: '',
-        description: '',
-        start_at: new Date(),
-        end_at: new Date()
-      }
+      event: newEvent()
     })
   }
 
@@ -180,12 +165,7 @@ class Calendar extends React.Component {
         this.setState({
           events,
           formDialogOpen: false,
-          event: {
-            title: '',
-            description: '',
-            start_at: new Date(),
-            end_at: new Date()
-          }
+          event: newEvent()
         })
       })
   }
@@ -201,7 +181,8 @@ class Calendar extends React.Component {
         })
         this.setState({
           events,
-          eventDialogOpen: false
+          eventDialogOpen: false,
+          event: newEvent()
         })
       })
       .catch((error) => {
@@ -210,25 +191,15 @@ class Calendar extends React.Component {
   }
 
   resetMonth = month => {
-    const { formattedStartDate, formattedEndDate } = this.getMonthConsts(month);
-    axios.get(`/events.json?start_date=${formattedStartDate}&end_date=${formattedEndDate}`)
+    const { calendarStartYYYYMMDD,
+            calendarEndYYYYMMDD } = calendarBoundaries(month);
+    axios.get(`/events.json?start_date=${calendarStartYYYYMMDD}&end_date=${calendarEndYYYYMMDD}`)
       .then((response) => {
         this.setState({ month, events: response.data });
       })
       .catch((error) => {
         console.log(error.response);
       })
-  }
-
-  getMonthConsts = month => {
-    const monthStart = dateFns.startOfMonth(month);
-    const monthEnd = dateFns.endOfMonth(monthStart);
-    const startDate = dateFns.startOfWeek(monthStart);
-    const endDate = dateFns.endOfWeek(monthEnd);
-    const dateFormat = "YYYY-MM-DD";
-    const formattedStartDate = dateFns.format(startDate, dateFormat);
-    const formattedEndDate = dateFns.format(endDate, dateFormat);
-    return { monthStart, startDate, endDate, formattedStartDate, formattedEndDate }
   }
 
 }

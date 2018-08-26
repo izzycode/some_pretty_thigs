@@ -19,3 +19,14 @@ export const calendarBoundaries = date => {
     calendarEndYYYYMMDD
   });
 }
+
+export const today = new Date();
+
+export const newEvent = () => {
+  return({
+    title: '',
+    description: '',
+    start_at: new Date(),
+    end_at: new Date()
+  })
+}
