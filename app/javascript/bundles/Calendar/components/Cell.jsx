@@ -3,22 +3,24 @@ import dateFns from 'date-fns';
 import DailyEvents from './DailyEvents';
 
 const Cell = props => {
-  const { day, monthStart, currentDate, events } = props;
-  const dateFormat = "D";
-  const formattedDate = dateFns.format(day, dateFormat);
-  const eventDateFormat = "YYYY-MM-DD";
-  const eventFormattedDate = dateFns.format(day, eventDateFormat);
+  const { day, currentDate, month, events } = props;
+  const cellFormattedDate = dateFns.format(day, "D");
+  const eventFormattedDate = dateFns.format(day, "YYYY-MM-DD");
+  // console.log(day, month);
   return(
     <div
       className={`col cell ${
-        !dateFns.isSameMonth(day, monthStart)
+        !dateFns.isSameMonth(day, month)
           ? "disabled"
           : dateFns.isSameDay(day, currentDate) ? "current" : ""
       }`}
       onClick={ () => { props.handleDateClick(day) }  }
     >
-      <DailyEvents dailyEvents={events[eventFormattedDate] || []} {...props} />
-      <span className="number">{formattedDate}</span>
+      <DailyEvents
+        dailyEvents={events[eventFormattedDate] || []}
+        {...props}
+      />
+      <span className="number">{cellFormattedDate}</span>
     </div>
   );
 

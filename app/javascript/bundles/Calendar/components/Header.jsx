@@ -2,8 +2,6 @@ import React from 'react';
 import dateFns from "date-fns";
 
 const Header = props => {
-  const dateFormat = "MMMM YYYY";
-
   return(
     <div className="header row flex-middle">
       <div className="col col-start">
@@ -13,14 +11,14 @@ const Header = props => {
       </div>
       <div className="col col-center">
         <span>
-          {dateFns.format(props.currentMonth, dateFormat)}
+          { dateFns.format(props.month, "YYYY MMMM") }
         </span>
       </div>
       <div className="col col-end" onClick={props.nextMonth}>
         <div className="icon">chevron_right</div>
       </div>
     </div>
-  );
+  )
 }
 
 export default Header;

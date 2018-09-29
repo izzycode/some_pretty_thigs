@@ -1,20 +1,21 @@
 import React from 'react';
-import dateFns from 'date-fns';
 
-const Days = props => {
-  const dateFormat = "dddd";
-  const days = [];
-  let startDate = dateFns.startOfWeek(props.currentMonth);
-  for (let i = 0; i < 7; i++) {
-    days.push(
-      <div className="col col-center" key={i}>
-        {dateFns.format(dateFns.addDays(startDate, i), dateFormat)}
-      </div>
-    );
-  }
+const Days = () => {
+  const days  = [ "sunday", "monday", "tuesday", "wednesday",
+                  "thursday", "friday", "saturday" ];
   return(
-    <div className="days row">{days}</div>
-  );
+    <div className="days row">
+      {
+        days.map((day) => {
+          return(
+            <div className="col col-center" key={day}>
+              { day }
+            </div>
+          )
+        })
+      }
+    </div>
+  )
 }
 
 export default Days;

@@ -4,7 +4,7 @@ import Event from './Event';
 const DailyEvents = props => {
   const { dailyEvents } = props;
   return(
-    <div>
+    <div className="events">
       {
         dailyEvents.map((calendarEvent) => {
           return(
